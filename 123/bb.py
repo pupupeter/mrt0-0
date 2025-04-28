@@ -7,9 +7,9 @@ from plotly.io import to_html
 import google.generativeai as genai
 
 client = MongoClient("mongodb://localhost:27017/")
-db = client["mrt"]
-collection = db["mrtdata"]
-genai.configure(api_key="AIzaSyBJj-7Am6kkBj-HGjex-d22j78HzNTRLK8")
+db = client["your client"]
+collection = db["your database"]
+genai.configure(api_key="your gemini apikey")
 
 def get_history():
     # 从 MongoDB 获取历史记录
