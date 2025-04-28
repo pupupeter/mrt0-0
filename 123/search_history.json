@@ -1,0 +1,378 @@
+[
+    {
+        "user_id": "anonymous",
+        "start": "西門",
+        "end": "古亭",
+        "fastest_route": [
+            "Take the Green Line (Songshan-Xindian Line) directly from Ximen to Guting"
+        ],
+        "fewest_transfers_route": [
+            "Take the Songshan-Xindian Line (Green Line) directly from Ximen to Guting"
+        ],
+        "timestamp": "2025-04-21T10:04:50.368304"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "西門",
+        "end": "新店",
+        "fastest_route": [
+            "Take the Green Line (Songshan-Xindian Line) directly from Ximen to Guting",
+            "Take the Green Line (Songshan-Xindian Line) directly from Ximen to Xindian"
+        ],
+        "fewest_transfers_route": [
+            "Take the Songshan-Xindian Line (Green Line) directly from Ximen to Xindian"
+        ],
+        "timestamp": "2025-04-21T10:06:06.251011"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "西門",
+        "end": "淡水",
+        "fastest_route": [
+            "Take the Taipei MRT from Ximen Station to Tamsui Station",
+            "The journey takes approximately 53 minutes and costs $1-$2"
+        ],
+        "fewest_transfers_route": [
+            "The best route is to take the Tamsui-Xinyi Line (Red Line) directly from Ximen Station to Tamsui Station",
+            "Please check the Taipei Metro website for any service updates or changes before your trip"
+        ],
+        "timestamp": "2025-04-21T10:21:22.637405"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "新莊",
+        "end": "古亭",
+        "fastest_route": [
+            "Take the Orange Line (Zhonghe-Xinlu line) directly from a station in Xinzhuang to Guting"
+        ],
+        "fewest_transfers_route": [
+            "Take the Xinzhuang - Luzhou Line to Guting Station"
+        ],
+        "timestamp": "2025-04-22T13:00:15.518279"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "新莊",
+        "end": "南勢角",
+        "fastest_route": [
+            "The fastest route from Xinzhuang to Nanshijiao is as follows: Take the Taipei MRT from Xinzhuang Station to Touqianzhuang Station",
+            "Transfer to the Circular Line (Yellow Line) and ride to Jingan Station",
+            "At Jingan Station, transfer to the Orange Line (Zhonghe-Xinlu Line) and take it to Nanshijiao Station"
+        ],
+        "fewest_transfers_route": [
+            "Take the Orange Line (Zhonghe-Xinlu Line) from a station in Xinzhuang (e",
+            "g",
+            ", Xinzhuang station) directly to Nanshijiao station",
+            "No transfers are needed"
+        ],
+        "timestamp": "2025-04-22T13:07:43.300298"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "南港展覽館",
+        "fastest_route": [
+            "Take the Songshan-Xindian Line from Guting to Chiang Kai-Shek Memorial Hall, transfer to the Tamsui-Xinyi Line towards Taipei Main Station, then transfer to the Bannan Line towards Nangang Exhibition Center"
+        ],
+        "fewest_transfers_route": [
+            "From Guting station, take the Songshan-Xindian Line (松山-新店線) towards Songshan (松山)",
+            "At Chiang Kai-Shek Memorial Hall (中正紀念堂), transfer to the Tamsui-Xinyi Line (淡水信義線) towards Tamsui (淡水)",
+            "Get off at Taipei Main Station (台北車站) and transfer to the Bannan Line (板南線) towards Nangang Exhibition Center (南港展覽館)",
+            "Get off at Nangang Exhibition Center Station (南港展覽館站)",
+            "Use Exit 1 for easiest access to both Exhibition Hall 1 and 2",
+            "If taking the Bannan Line from Taipei Main Station, it is a direct ride to Nangang Exhibition Center Station",
+            "However, if the Bannan Line is too crowded, an alternate solution is to transfer at Taipei Main Station to the TRA (Taiwan Railways Administration) and take a local train one stop to Nangang Station, which is next to the Exhibition Center"
+        ],
+        "timestamp": "2025-04-22T15:35:07.080532"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "淡水",
+        "fastest_route": [
+            "Take the Tamsui-Xinyi Line (Red Line) directly from Guting to Tamsui"
+        ],
+        "fewest_transfers_route": [
+            "Take the Orange line from Guting to Minquan W",
+            "Rd",
+            "station, then transfer to the Red line toward Tamsui"
+        ],
+        "timestamp": "2025-04-22T15:52:50.494815"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "淡水",
+        "fastest_route": [
+            "Take the Songshan-Xindian Line (Green Line) from Guting to Chiang Kai-Shek Memorial Hall Station",
+            "Then transfer to the Tamsui-Xinyi Line (Red Line) and take it to Tamsui Station"
+        ],
+        "fewest_transfers_route": [
+            "Take the Green Line from Guting to Taipei Main Station, then transfer to the Red Line towards Tamsui"
+        ],
+        "timestamp": "2025-04-22T16:00:31.221590"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "淡水",
+        "end": "石牌",
+        "fastest_route": [
+            "Take the Tamsui-Xinyi Line (Red Line) directly from Tamsui to Shipai"
+        ],
+        "fewest_transfers_route": [
+            "Take the Tamsui-Xinyi Line (Red Line) directly from Tamsui to Shipai"
+        ],
+        "timestamp": "2025-04-22T16:03:34.420525"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "淡水",
+        "fastest_route": [
+            "## Search Results\n\n[Route Map & Timetables - Taipei Rapid Transit Corporation ─ Metro",
+            "](https://english",
+            "metro",
+            "taipei/cp",
+            "aspx?n=1BE0AF76C79F9A38)\nFor callers in Taipei City, please dial 1999 for the Citizen Hotline",
+            "For callers outside of Taipei City, please dial 886-2-27208889",
+            "TEL: 886-2-2536-3001 TRTC Departmental Contact Numbers\n\n[Ultimate Taipei MRT Guide: Routes, Fares & Hours (2025) - Navi Taiwan](https://navitaiwan",
+            "com/taipei-mrt/)\nNumber of New Taipei Metro Stations: 14: Number of Taipei MRT Stations: 117: Number of Lines (Incl",
+            "Circular Line) 6: Operated By: Taipei Rapid Transit Corporation: Date First Operated: March 26, 1996: Cities Within Network: Taipei City & New Taipei City: Maximum Speed: 80 km per hour: Daily Riders (2023) 7",
+            "86 million: Train Length: 3 - 6",
+            "[How to get from Taipei to Tamsui by - Rome2rio](https://www",
+            "rome2rio",
+            "com/s/Taipei/Tamsui)\nRome2Rio makes travelling from Taipei to Tamsui easy",
+            "Rome2Rio is a door-to-door travel information and booking engine, helping you get to and from any location in the world",
+            "Find all the transport options for your trip from Taipei to Tamsui right here",
+            "Rome2Rio displays up to date schedules, route maps, journey times and estimated fares from relevant transport operators, ensuring you can make",
+            "[Taipei Metro (MRT) — Map, Lines, Route, Hours, Tickets](https://metroeasy",
+            "com/taiwan/taipei-metro-mrt/)\nThe Taipei Metro, also known as the MRT, is an important part of the public transport infrastructure in Taipei, Taiwan",
+            "Known as the Orange Line, the Zhonghe-Xinlu Line serves 26 stations along a 29",
+            "3km route",
+            "Similar to the other lines, the Zhonghe-Xinlu Line operates with a train frequency of approximately every 3-6 minutes during peak",
+            "[Taipei MRT: Tips for Hassle-Free Travelling - Taipei Travel Geek](https://www",
+            "taipeitravelgeek",
+            "com/mrt)\nTaipei's underground public transportation system, the Mass Rapid Transit (MRT) is one of the most reliable and clean public underground services in the world",
+            "Sometimes known as Metro Taipei, it is an efficient and convenient way to get around the city, with trains running frequently and serving a wide area",
+            "[Taipei Rapid Transit Corporation ─ Metro Service](https://english",
+            "metro",
+            "taipei/cp",
+            "aspx?n=E6F97A6FF9935E98)\n5 (including Wenhu Line, Tamsui-Xinyi Line, Songshan-Xindian Line, Zhonghe-Xinlu Line and Bannan Line) Number of stations: 117",
+            "Transfer stations (Ximen, CKS Memorial Hall, Guting and Dongmen Stations) that connect two lines yet share only one physical station, are calculated as one station each",
+            "[Taipei Metro Guideline - mrhost blog](https://blog",
+            "mrhost",
+            "com",
+            "tw/7104/taipei-metro-guideline/)\nThe Red Line connects Tamsui north of Taipei City and Xinyi District so it is called Tamsui-Xinyi Line",
+            "It includes a total of 28 stations including Tamsui, Shilin, Zhongzheng, Xinyi, etc",
+            "If tourists want to travel to Tamsui, taking the Taipei Metro by Tamsui-Xinyi Line will be the best choice",
+            "Peak headway：3 - 8 min; Off-peak headway：4",
+            "[Taipei - interactive metro guide",
+            "Taipei MRT map, price, working hours](https://metroguides",
+            "info/city/taipei?ln=en)\nTaipei metro guide around the city",
+            "Interactive MRT map, best route and price calculator",
+            "Information about Taipei MRT price, tickets & working hours",
+            "Taipei",
+            "Toursists can get Taipei Fun Passes available for one day - 1200 TWD, 2 days -1600 TWD and 3 days - 1900 TWD",
+            "These cards can be used on Taipei Metro, bus services for unlimited travel",
+            "[About Taipei MRT - TravelKing旅遊王](https://www",
+            "travelking",
+            "com",
+            "tw/eng/tourguide/taipei/taipeimrt/routes",
+            "asp)\nXinzhuang Line is the first Taipei Metro line to cross under Tamsui River, a high-capacity underground extension of the MRT Zhonghe Line",
+            "The line runs from Guting through transfer sections of Nangang and Tamsui lines, beneath Tamsui River, through Sanchong, and terminate in Xinzhuang District of New Taipei City",
+            "[Taipei MRT Red Line and Blue Line Guideline - mrhost blog](https://blog",
+            "mrhost",
+            "com",
+            "tw/2270/taipei-metro-red-and-blue/)\nSource : taiwan",
+            "net Red Line Station：R28 Tamsui Station; Distance：：1 minute walk; Address：Zhongshan Rd",
+            ", Tamsui Dist",
+            ", New Taipei City; Tamsui (淡水) is located northwest of Taipei which is surrounded by mountains and rivers",
+            "Tamsui is the best sunset landscape in Taipei and there are a lot of restaurants, shops, street food in Tamsui old street"
+        ],
+        "fewest_transfers_route": [
+            "Take the Green Line from Guting to CKS Memorial Hall Station",
+            "Transfer to the Red Line towards Tamsui"
+        ],
+        "timestamp": "2025-04-22T16:09:05.590457"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "淡水",
+        "fastest_route": [
+            "Example"
+        ],
+        "fewest_transfers_route": [
+            "Take the Tamsui-Xinyi Line (Red Line) from Guting Station to Tamsui Station"
+        ],
+        "timestamp": "2025-04-22T16:17:58.789898"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "淡水",
+        "fastest_route": [
+            "Take the Tamsui-Xinyi Line (Red Line) directly from Guting Station to Tamsui Station"
+        ],
+        "fewest_transfers_route": [
+            "Take the Green Line from Guting to CKS Memorial Hall Station, then transfer to the Red Line towards Tamsui"
+        ],
+        "timestamp": "2025-04-22T16:23:06.910092"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "松江南京",
+        "fastest_route": [
+            "Take the orange line from Guting to Songjiang Nanjing"
+        ],
+        "fewest_transfers_route": [
+            "Take the Orange Line (Zhonghe-Xinlu Line) from Guting Station towards Huilong or Luzhou and get off at Songjiang Nanjing Station"
+        ],
+        "timestamp": "2025-04-22T16:30:40.350481"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "西門",
+        "fastest_route": [
+            "Take the Songshan-Xindian Line directly from Guting Station to Ximen Station"
+        ],
+        "fewest_transfers_route": [
+            "Take the Songshan-Xindian Line (Green Line) directly from Guting to Ximen"
+        ],
+        "timestamp": "2025-04-22T16:40:22.204963"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "西門",
+        "end": "古亭",
+        "fastest_route": [
+            "Take the Green Line (Songshan-Xindian Line) directly from Ximen Station to Guting Station",
+            "The journey takes approximately 5 minutes"
+        ],
+        "fewest_transfers_route": [
+            "Take the Songshan-Xindian Line (Green Line) directly from Ximen to Guting"
+        ],
+        "timestamp": "2025-04-22T16:47:20.502080"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "忠孝新生",
+        "end": "西門",
+        "fastest_route": [
+            "Take the Bannan Line (Blue Line) directly from Zhongxiao Xinsheng Station to Ximen Station"
+        ],
+        "fewest_transfers_route": [
+            "Take the Bannan Line (Blue Line) from Zhongxiao Xinsheng Station to Ximen Station",
+            "The intermediate stations are Shandao Temple and Taipei Main Station"
+        ],
+        "timestamp": "2025-04-26T23:39:16.657097"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "西門",
+        "end": "中山國小",
+        "fastest_route": [
+            "Take the Green Line from Ximen Station to Minquan West Road Station",
+            "Transfer to the Orange Line towards Nanshijiao or Luzhou/Huilong",
+            "Take the Orange Line one stop to Zhongshan Elementary School Station"
+        ],
+        "fewest_transfers_route": [
+            "Take the Green Line (Songshan-Xindian line) from Ximen Station towards Songshan, and get off at Zhongshan Elementary School Station"
+        ],
+        "timestamp": "2025-04-26T23:50:04.024925"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "西門",
+        "end": "中山國小",
+        "fastest_route": [
+            "Take the Green Line from Ximen Station to Minquan West Road Station",
+            "Transfer to the Orange Line towards Nanshijiao or Luzhou/Huilong",
+            "Take the Orange Line one stop to Zhongshan Elementary School Station"
+        ],
+        "fewest_transfers_route": [
+            "Take the Green Line (Songshan-Xindian line) from Ximen Station towards Songshan, and get off at Zhongshan Elementary School Station"
+        ],
+        "timestamp": "2025-04-26T23:50:06.934816"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "中山國小",
+        "end": "南勢角",
+        "fastest_route": [
+            "Take the Taipei MRT orange line (Zhonghe-Xinlu Line) from Zhongshan Elementary School Station to Nanshijiao Station",
+            "It should be a direct ride without any transfers"
+        ],
+        "fewest_transfers_route": [
+            "Take the orange line from Zhongshan Elementary School station towards Luzhou or Huilong",
+            "Transfer at Minquan West Road station to the orange line towards Nanshijiao",
+            "Get off at Nanshijiao station"
+        ],
+        "timestamp": "2025-04-26T23:52:34.156708"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "南勢角",
+        "fastest_route": [
+            "Take the Orange Line (中和新蘆線) directly from Guting to Nanshijiao"
+        ],
+        "fewest_transfers_route": [
+            "Take the Orange Line (Zhonghe-Xinlu Line) directly from Guting Station to Nanshijiao Station",
+            "No transfers are necessary"
+        ],
+        "timestamp": "2025-04-26T23:57:21.905686"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "南勢角",
+        "fastest_route": [
+            "Take the Zhonghe-Xinlu Line from Guting Station towards Nanshijiao Station",
+            "The stations in order are: Dingxi, Yongan Market, Jingan, Nanshijiao"
+        ],
+        "fewest_transfers_route": [
+            "Take the Orange Line (中和新蘆線) from Guting Station directly to Nanshijiao Station"
+        ],
+        "timestamp": "2025-04-27T00:10:01.111798"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "南勢角",
+        "fastest_route": [
+            "Take the Orange Line (Zhonghe-Xinlu Line) from Guting towards Nanshijiao",
+            "The stations in between are Dingxi, Yongan Market, and Jingan"
+        ],
+        "fewest_transfers_route": [
+            "Take the Orange Line (Zhonghe-Xinlu Line) directly from Guting to Nanshijiao"
+        ],
+        "timestamp": "2025-04-27T00:25:17.808996"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "南勢角",
+        "fastest_route": [
+            "Take the orange line (Zhonghe-Xinlu Line) directly from Guting to Nanshijiao"
+        ],
+        "fewest_transfers_route": [
+            "Take the Zhonghe-Xinlu Line (Orange Line) directly from Guting to Nanshijiao"
+        ],
+        "timestamp": "2025-04-27T00:37:12.392453"
+    },
+    {
+        "user_id": "anonymous",
+        "start": "古亭",
+        "end": "景安",
+        "fastest_route": [
+            "Take the Orange Line (Zhonghe-Xinlu Line) directly from Guting to Jingan"
+        ],
+        "fewest_transfers_route": [
+            "Take the Orange Line (Zhonghe-Xinlu Line) directly from Guting to Jingan"
+        ],
+        "timestamp": "2025-04-27T09:50:32.114133"
+    }
+]

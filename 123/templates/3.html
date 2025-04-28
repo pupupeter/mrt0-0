@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北捷運資訊查詢</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .iframe-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        iframe {
+            border-radius: 5px;
+        }
+        #result-container, #route-container, #history-container, #summary-container {
+            margin-top: 20px;
+            white-space: pre-line;
+            text-align: left;
+        }
+        button {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>台北捷運資訊查詢</h1>
+
+        <!-- 擁擠度查詢 -->
+        <div class="input-group">
+            <input type="text" id="query" placeholder="請輸入捷運站名稱查詢擁擠度" />
+            <button onclick="searchCrowded()">查詢擁擠度</button>
+        </div>
+
+        <!-- 路線查詢 -->
+        <div class="input-group">
+            <input type="text" id="start_station" placeholder="起點站" />
+            <input type="text" id="end_station" placeholder="終點站" />
+            <button onclick="searchRoute()">查詢最佳路徑</button>
+        </div>
+
+        <!-- 查詢紀錄分析 -->
+        <div class="input-group">
+            <button onclick="fetchHistoryAnalysis()">查詢紀錄分析</button>
+        </div>
+
+        <!-- 跳轉到 2.html -->
+        <div class="input-group">
+            <button onclick="window.location.href='/2'">跳轉到 2.html</button>
+        </div>
+
+        <div id="result-container" class="iframe-container"></div>
+        <div id="route-container"></div>
+        <div id="history-container"></div>
+
+    </div>
+
+    <script>
+        function searchCrowded() {
+            const query = document.getElementById('query').value;
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.innerHTML = '查詢中...';
+
+            fetch(`/search?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    resultContainer.innerHTML = '';
+                    if (data.error) {
+                        resultContainer.textContent = data.error;
+                    } else {
+                        data.forEach(item => {
+                            const iframe = document.createElement('iframe');
+                            iframe.id = `Taipei-City-Dashboard-Component-${item.id}`;
+                            iframe.title = item.title;
+                            iframe.src = `https://citydashboard.taipei/embed/${item.id}/taipei`;
+                            iframe.width = '450';
+                            iframe.height = '400';
+                            iframe.style.borderRadius = '5px';
+                            iframe.frameBorder = '0';
+                            iframe.allow = 'fullscreen';
+                            iframe.loading = 'lazy';
+                            resultContainer.appendChild(iframe);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('查詢錯誤:', error);
+                    resultContainer.textContent = '查詢發生錯誤';
+                });
+        }
+
+        function searchRoute() {
+            const startStation = document.getElementById('start_station').value;
+            const endStation = document.getElementById('end_station').value;
+            const routeContainer = document.getElementById('route-container');
+            routeContainer.textContent = '查詢中...';
+
+            fetch(`/route?start=${encodeURIComponent(startStation)}&end=${encodeURIComponent(endStation)}`)
+                .then(response => response.json())
+                .then(data => {
+                    routeContainer.innerHTML = '';
+
+                    if (data.error) {
+                        routeContainer.textContent = `錯誤：${data.error}`;
+                        return;
+                    }
+
+                    const title = document.createElement('h3');
+                    title.textContent = `🚇 從 ${data.start} 到 ${data.end} 的建議路線：`;
+                    routeContainer.appendChild(title);
+
+                    if (data.fastest_route && Array.isArray(data.fastest_route)) {
+                        const fastTitle = document.createElement('h4');
+                        fastTitle.textContent = '📍 最快速路線：';
+                        routeContainer.appendChild(fastTitle);
+
+                        const fastList = document.createElement('ul');
+                        data.fastest_route.forEach(step => {
+                            const li = document.createElement('li');
+                            li.textContent = step;
+                            fastList.appendChild(li);
+                        });
+                        routeContainer.appendChild(fastList);
+                    }
+
+                    if (data.fewest_transfers_route && Array.isArray(data.fewest_transfers_route)) {
+                        const fewTitle = document.createElement('h4');
+                        fewTitle.textContent = '🔁 最少轉乘路線：';
+                        routeContainer.appendChild(fewTitle);
+
+                        const fewList = document.createElement('ul');
+                        data.fewest_transfers_route.forEach(step => {
+                            const li = document.createElement('li');
+                            li.textContent = step;
+                            fewList.appendChild(li);
+                        });
+                        routeContainer.appendChild(fewList);
+                    }
+
+                    if ((!data.fastest_route || data.fastest_route.length === 0) &&
+                        (!data.fewest_transfers_route || data.fewest_transfers_route.length === 0)) {
+                        routeContainer.textContent = '未找到路徑資訊。';
+                    }
+                })
+                .catch(error => {
+                    console.error('查詢路徑錯誤:', error);
+                    routeContainer.textContent = '查詢路徑發生錯誤';
+                });
+        }
+
+        function fetchHistoryAnalysis() {
+            const historyContainer = document.getElementById('history-container');
+            historyContainer.innerHTML = '查詢中...';
+
+            fetch('/history_analysis')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        historyContainer.textContent = `錯誤：${data.error}`;
+                    } else {
+                        let html = ` 
+                            <h3>📊 查詢紀錄統計</h3>
+                            <ul>
+                                <li>查詢總次數：${data.total_queries}</li>
+                                <li>🔝 熱門起點站：
+                                    <ul>${Object.entries(data.top_start_stations).map(([k, v]) => `<li>${k}：${v} 次</li>`).join('')}</ul>
+                                </li>
+                                <li>🔝 熱門終點站：
+                                    <ul>${Object.entries(data.top_end_stations).map(([k, v]) => `<li>${k}：${v} 次</li>`).join('')}</ul>
+                                </li>
+                                <li>🛤️ 常見路線：
+                                    <ul>${Object.entries(data.most_frequent_routes).map(([k, v]) => `<li>${k}：${v} 次</li>`).join('')}</ul>
+                                </li>
+                                <li>⏰ 查詢時間分佈（小時）：
+                                    <ul>${Object.entries(data.query_hour_distribution).map(([hour, count]) => `<li>${hour} 點：${count} 次</li>`).join('')}</ul>
+                                </li>
+                            </ul>
+                        `;
+                        historyContainer.innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    console.error('查詢紀錄錯誤:', error);
+                    historyContainer.textContent = '查詢紀錄發生錯誤';
+                });
+        }
+
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+

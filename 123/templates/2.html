@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜尋紀錄統計圖與AI分析</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .content {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-home a {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>搜尋紀錄統計</h2>
+
+    <!-- 顯示柱狀圖 -->
+    <div class="content">
+        {{ graph_html | safe }}
+    </div>
+
+    <!-- 顯示 Start 站點的圓餅圖 -->
+    <div class="content">
+        <h3>出發站搜尋統計</h3>
+        {{ start_pie_chart_html | safe }}
+    </div>
+
+    <!-- 顯示 End 站點的圓餅圖 -->
+    <div class="content">
+        <h3>終點站搜尋統計</h3>
+        {{ end_pie_chart_html | safe }}
+    </div>
+
+    <!-- 回首頁按鈕 -->
+    <div class="back-home">
+        <a href="/">回首頁</a>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
