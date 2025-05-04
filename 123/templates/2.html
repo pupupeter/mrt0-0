@@ -5,62 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>搜尋紀錄統計圖與AI分析</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
         }
-        h2 {
-            text-align: center;
-            margin-top: 30px;
+        .chart-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
         }
-        .content {
-            text-align: center;
-            margin-top: 20px;
+        .chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
-        .back-home {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
+        .gradient-header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
         }
-        .back-home a {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
+        .back-btn {
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
-<body>
-    <h2>搜尋紀錄統計</h2>
+<body class="min-h-screen pb-12">
+    <!-- 頁面標題 -->
+    <header class="gradient-header text-white py-8 px-4 mb-8">
+        <div class="container mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold text-center">搜尋紀錄統計分析</h1>
+            <p class="text-center mt-2 opacity-90">查看您的搜尋模式與偏好分析</p>
+        </div>
+    </header>
 
-    <!-- 顯示柱狀圖 -->
-    <div class="content">
-        {{ graph_html | safe }}
+    <div class="container mx-auto px-4">
+        <!-- 主要統計圖表 -->
+        <div class="chart-container p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">搜尋頻率統計</h2>
+            <div class="bg-white rounded-lg overflow-hidden">
+                {{ graph_html | safe }}
+            </div>
+        </div>
+
+        <!-- 圓餅圖區域 - 使用網格排列 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <!-- 出發站圓餅圖 -->
+            <div class="chart-container p-6">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">出發站搜尋統計</h2>
+                <div class="bg-white rounded-lg overflow-hidden">
+                    {{ start_pie_chart_html | safe }}
+                </div>
+            </div>
+
+            <!-- 終點站圓餅圖 -->
+            <div class="chart-container p-6">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">終點站搜尋統計</h2>
+                <div class="bg-white rounded-lg overflow-hidden">
+                    {{ end_pie_chart_html | safe }}
+                </div>
+            </div>
+        </div>
+
+        <!-- 分析摘要區塊 -->
+        <div class="chart-container p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">搜尋模式分析</h2>
+            <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-indigo-500">
+                <p class="text-gray-700">
+                    根據您的搜尋數據，系統已生成個人化分析報告。這些數據顯示了您最常搜尋的路線和時間模式，
+                    可幫助您更有效地規劃行程。
+                </p>
+            </div>
+        </div>
+
+        <!-- 回首頁按鈕 -->
+        <div class="text-center">
+            <a href="/" class="back-btn inline-block py-3 px-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-lg">
+                <span class="flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    回首頁
+                </span>
+            </a>
+        </div>
     </div>
 
-    <!-- 顯示 Start 站點的圓餅圖 -->
-    <div class="content">
-        <h3>出發站搜尋統計</h3>
-        {{ start_pie_chart_html | safe }}
-    </div>
-
-    <!-- 顯示 End 站點的圓餅圖 -->
-    <div class="content">
-        <h3>終點站搜尋統計</h3>
-        {{ end_pie_chart_html | safe }}
-    </div>
-
-    <!-- 回首頁按鈕 -->
-    <div class="back-home">
-        <a href="/">回首頁</a>
-    </div>
-</body>
+    <!-- 頁腳 -->
+    <footer class="mt-12 py-4 text-center text-gray-500 text-sm">
+        <p>© 2023 搜尋統計分析系統</p>
+    </footer>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93a8603981a2a9b6',t:'MTc0NjM2NTY2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
 
 
 
