@@ -1,91 +1,286 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>台北捷運資訊查詢</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8;
         }
-        .input-group {
-            margin-bottom: 15px;
+        .metro-card {
+            transition: all 0.3s ease;
         }
-        .iframe-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
+        .metro-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        iframe {
-            border-radius: 5px;
+        .line-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 6px;
         }
-        #result-container, #route-container, #history-container, #summary-container {
-            margin-top: 20px;
-            white-space: pre-line;
-            text-align: left;
+        .line-red { background-color: #e03a3e; }
+        .line-green { background-color: #419641; }
+        .line-blue { background-color: #0070bd; }
+        .line-orange { background-color: #f8b61c; }
+        .line-brown { background-color: #8e5e3f; }
+        .line-yellow { background-color: #ffdb00; }
+        .iframe-container iframe {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin: 10px;
         }
-        button {
-            padding: 8px 15px;
-            cursor: pointer;
+        .tab-active {
+            color: #1a56db;
+            border-bottom: 3px solid #1a56db;
         }
-        ul {
-            padding-left: 20px;
+        .pulse {
+            animation: pulse 2s infinite;
         }
-        li {
-            margin-bottom: 5px;
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
     </style>
 </head>
-<body>
-
-    <div class="container">
-        <h1>台北捷運資訊查詢</h1>
-
-        <!-- 擁擠度查詢 -->
-        <div class="input-group">
-            <input type="text" id="query" placeholder="請輸入捷運站名稱查詢擁擠度" />
-            <button onclick="searchCrowded()">查詢擁擠度</button>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-indigo-800 mb-2">台北捷運資訊查詢</h1>
+            <p class="text-gray-600">快速查詢捷運站擁擠度、最佳路線與統計分析</p>
         </div>
 
-        <!-- 路線查詢 -->
-        <div class="input-group">
-            <input type="text" id="start_station" placeholder="起點站" />
-            <input type="text" id="end_station" placeholder="終點站" />
-            <button onclick="searchRoute()">查詢最佳路徑</button>
+        <!-- 頁面導航按鈕 -->
+        <div class="flex justify-center mb-6">
+            <button onclick="window.location.href='/2'" 
+                class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-2 px-6 rounded-full transition duration-300 ease-in-out transform hover:scale-105 flex items-center shadow-md">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                跳轉到 2.html
+            </button>
         </div>
 
-        <!-- 查詢紀錄分析 -->
-        <div class="input-group">
-            <button onclick="fetchHistoryAnalysis()">查詢紀錄分析</button>
+        <!-- Tabs -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div class="flex border-b border-gray-200 mb-6">
+                <button id="tab-crowded" class="tab-active px-4 py-2 font-medium text-lg" onclick="switchTab('crowded')">
+                    <span class="mr-2">🚉</span>擁擠度查詢
+                </button>
+                <button id="tab-route" class="px-4 py-2 font-medium text-lg text-gray-500" onclick="switchTab('route')">
+                    <span class="mr-2">🗺️</span>路線查詢
+                </button>
+                <button id="tab-history" class="px-4 py-2 font-medium text-lg text-gray-500" onclick="switchTab('history')">
+                    <span class="mr-2">📊</span>查詢紀錄分析
+                </button>
+            </div>
+
+            <!-- 擁擠度查詢 -->
+            <div id="content-crowded" class="tab-content">
+                <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <div class="relative flex-grow">
+                        <input type="text" id="query" placeholder="請輸入捷運站名稱查詢擁擠度" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <button onclick="searchCrowded()" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16l2.879-2.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        查詢擁擠度
+                    </button>
+                </div>
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>熱門站點：<span class="text-indigo-600 cursor-pointer hover:underline" onclick="document.getElementById('query').value='台北車站'; searchCrowded()">台北車站</span> · 
+                    <span class="text-indigo-600 cursor-pointer hover:underline" onclick="document.getElementById('query').value='忠孝復興'; searchCrowded()">忠孝復興</span> · 
+                    <span class="text-indigo-600 cursor-pointer hover:underline" onclick="document.getElementById('query').value='西門'; searchCrowded()">西門</span> · 
+                    <span class="text-indigo-600 cursor-pointer hover:underline" onclick="document.getElementById('query').value='市政府'; searchCrowded()">市政府</span></p>
+                </div>
+            </div>
+
+            <!-- 路線查詢 -->
+            <div id="content-route" class="tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">起</div>
+                        </div>
+                        <input type="text" id="start_station" placeholder="請輸入起點站" 
+                            class="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <div class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-xs font-bold">終</div>
+                        </div>
+                        <input type="text" id="end_station" placeholder="請輸入終點站" 
+                            class="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <button onclick="searchRoute()" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                        </svg>
+                        查詢最佳路徑
+                    </button>
+                </div>
+                <div class="mt-4 text-sm text-gray-500">
+                    <p>熱門路線：
+                        <span class="text-indigo-600 cursor-pointer hover:underline" onclick="document.getElementById('start_station').value='台北車站'; document.getElementById('end_station').value='象山'; searchRoute()">台北車站→象山</span> · 
+                        <span class="text-indigo-600 cursor-pointer hover:underline" onclick="document.getElementById('start_station').value='北投'; document.getElementById('end_station').value='淡水'; searchRoute()">北投→淡水</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- 查詢紀錄分析 -->
+            <div id="content-history" class="tab-content hidden">
+                <div class="flex justify-center">
+                    <button onclick="fetchHistoryAnalysis()" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        載入查詢紀錄分析
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- 跳轉到 2.html -->
-        <div class="input-group">
-            <button onclick="window.location.href='/2'">跳轉到 2.html</button>
+        <!-- 結果顯示區域 -->
+        <div id="result-container" class="iframe-container flex flex-wrap justify-center gap-4 mt-8"></div>
+        
+        <div id="route-container" class="bg-white rounded-xl shadow-lg p-6 mt-8 hidden">
+            <!-- 路線結果將在這裡顯示 -->
+        </div>
+        
+        <div id="history-container" class="bg-white rounded-xl shadow-lg p-6 mt-8 hidden">
+            <!-- 歷史分析結果將在這裡顯示 -->
         </div>
 
-        <div id="result-container" class="iframe-container"></div>
-        <div id="route-container"></div>
-        <div id="history-container"></div>
+        <!-- 捷運線路圖 -->
+        <div class="mt-10 bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">台北捷運路線圖</h2>
+            <div class="flex flex-wrap gap-4 mb-4">
+                <div class="flex items-center"><span class="line-dot line-red"></span>淡水信義線</div>
+                <div class="flex items-center"><span class="line-dot line-green"></span>松山新店線</div>
+                <div class="flex items-center"><span class="line-dot line-blue"></span>板南線</div>
+                <div class="flex items-center"><span class="line-dot line-orange"></span>中和新蘆線</div>
+                <div class="flex items-center"><span class="line-dot line-brown"></span>文湖線</div>
+                <div class="flex items-center"><span class="line-dot line-yellow"></span>環狀線</div>
+            </div>
+            <div class="flex justify-center">
+                <img src="https://web.metro.taipei/pages/assets/images/routemap2023n.png" 
+                    alt="台北捷運路線圖" class="max-w-full h-auto rounded-lg shadow-md">
+            </div>
+        </div>
 
+        <!-- 頁尾 -->
+        <footer class="mt-10 text-center text-gray-500 text-sm">
+            <p>© 2023 台北捷運資訊查詢系統 | 資料僅供參考</p>
+        </footer>
     </div>
 
     <script>
+        // 切換頁籤功能
+        function switchTab(tabName) {
+            // 隱藏所有內容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // 重置所有頁籤樣式
+            document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('text-gray-500');
+            });
+            
+            // 顯示選中的內容
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            
+            // 設置選中頁籤樣式
+            document.getElementById(`tab-${tabName}`).classList.add('tab-active');
+            document.getElementById(`tab-${tabName}`).classList.remove('text-gray-500');
+            
+            // 隱藏結果容器
+            if (tabName === 'crowded') {
+                document.getElementById('result-container').classList.remove('hidden');
+                document.getElementById('route-container').classList.add('hidden');
+                document.getElementById('history-container').classList.add('hidden');
+            } else if (tabName === 'route') {
+                document.getElementById('result-container').classList.add('hidden');
+                document.getElementById('route-container').classList.remove('hidden');
+                document.getElementById('history-container').classList.add('hidden');
+            } else if (tabName === 'history') {
+                document.getElementById('result-container').classList.add('hidden');
+                document.getElementById('route-container').classList.add('hidden');
+                document.getElementById('history-container').classList.remove('hidden');
+            }
+        }
+
         function searchCrowded() {
             const query = document.getElementById('query').value;
+            if (!query.trim()) {
+                showNotification('請輸入捷運站名稱');
+                return;
+            }
+            
             const resultContainer = document.getElementById('result-container');
-            resultContainer.innerHTML = '查詢中...';
+            resultContainer.innerHTML = `
+                <div class="w-full text-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+                    <p class="mt-3 text-indigo-600 font-medium">查詢中，請稍候...</p>
+                </div>
+            `;
 
             fetch(`/search?query=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
                     resultContainer.innerHTML = '';
                     if (data.error) {
-                        resultContainer.textContent = data.error;
+                        resultContainer.innerHTML = `
+                            <div class="w-full bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-red-700">${data.error}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else if (data.length === 0) {
+                        resultContainer.innerHTML = `
+                            <div class="w-full bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-md">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-700">未找到與「${query}」相關的擁擠度資訊</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                     } else {
                         data.forEach(item => {
                             const iframe = document.createElement('iframe');
@@ -94,7 +289,7 @@
                             iframe.src = `https://citydashboard.taipei/embed/${item.id}/taipei`;
                             iframe.width = '450';
                             iframe.height = '400';
-                            iframe.style.borderRadius = '5px';
+                            iframe.style.borderRadius = '12px';
                             iframe.frameBorder = '0';
                             iframe.allow = 'fullscreen';
                             iframe.loading = 'lazy';
@@ -104,15 +299,40 @@
                 })
                 .catch(error => {
                     console.error('查詢錯誤:', error);
-                    resultContainer.textContent = '查詢發生錯誤';
+                    resultContainer.innerHTML = `
+                        <div class="w-full bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-red-700">查詢發生錯誤，請稍後再試</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 });
         }
 
         function searchRoute() {
             const startStation = document.getElementById('start_station').value;
             const endStation = document.getElementById('end_station').value;
+            
+            if (!startStation.trim() || !endStation.trim()) {
+                showNotification('請輸入起點站和終點站');
+                return;
+            }
+            
             const routeContainer = document.getElementById('route-container');
-            routeContainer.textContent = '查詢中...';
+            routeContainer.classList.remove('hidden');
+            routeContainer.innerHTML = `
+                <div class="flex justify-center items-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+                    <p class="ml-4 text-indigo-600 font-medium">正在規劃最佳路線...</p>
+                </div>
+            `;
 
             fetch(`/route?start=${encodeURIComponent(startStation)}&end=${encodeURIComponent(endStation)}`)
                 .then(response => response.json())
@@ -120,93 +340,351 @@
                     routeContainer.innerHTML = '';
 
                     if (data.error) {
-                        routeContainer.textContent = `錯誤：${data.error}`;
+                        routeContainer.innerHTML = `
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-red-700">${data.error}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                         return;
                     }
 
-                    const title = document.createElement('h3');
-                    title.textContent = `🚇 從 ${data.start} 到 ${data.end} 的建議路線：`;
-                    routeContainer.appendChild(title);
+                    let html = `
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-bold mr-3">起</div>
+                            <div class="text-xl font-bold">${data.start}</div>
+                            <div class="mx-4 flex-grow border-t-2 border-dashed border-gray-300"></div>
+                            <div class="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center text-white font-bold mr-3">終</div>
+                            <div class="text-xl font-bold">${data.end}</div>
+                        </div>
+                    `;
 
-                    if (data.fastest_route && Array.isArray(data.fastest_route)) {
-                        const fastTitle = document.createElement('h4');
-                        fastTitle.textContent = '📍 最快速路線：';
-                        routeContainer.appendChild(fastTitle);
-
-                        const fastList = document.createElement('ul');
-                        data.fastest_route.forEach(step => {
-                            const li = document.createElement('li');
-                            li.textContent = step;
-                            fastList.appendChild(li);
-                        });
-                        routeContainer.appendChild(fastList);
+                    if (data.fastest_route && Array.isArray(data.fastest_route) && data.fastest_route.length > 0) {
+                        html += `
+                            <div class="bg-blue-50 rounded-lg p-5 mb-6">
+                                <div class="flex items-center mb-4">
+                                    <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-bold text-blue-800">最快速路線</h3>
+                                </div>
+                                <ul class="space-y-3">
+                                    ${data.fastest_route.map((step, index) => `
+                                        <li class="flex">
+                                            <div class="mr-3 flex flex-col items-center">
+                                                <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">${index + 1}</div>
+                                                ${index < data.fastest_route.length - 1 ? '<div class="w-0.5 h-full bg-blue-300"></div>' : ''}
+                                            </div>
+                                            <div class="pb-2">${formatRouteStep(step)}</div>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        `;
                     }
 
-                    if (data.fewest_transfers_route && Array.isArray(data.fewest_transfers_route)) {
-                        const fewTitle = document.createElement('h4');
-                        fewTitle.textContent = '🔁 最少轉乘路線：';
-                        routeContainer.appendChild(fewTitle);
-
-                        const fewList = document.createElement('ul');
-                        data.fewest_transfers_route.forEach(step => {
-                            const li = document.createElement('li');
-                            li.textContent = step;
-                            fewList.appendChild(li);
-                        });
-                        routeContainer.appendChild(fewList);
+                    if (data.fewest_transfers_route && Array.isArray(data.fewest_transfers_route) && data.fewest_transfers_route.length > 0) {
+                        html += `
+                            <div class="bg-purple-50 rounded-lg p-5">
+                                <div class="flex items-center mb-4">
+                                    <svg class="w-6 h-6 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                    </svg>
+                                    <h3 class="text-lg font-bold text-purple-800">最少轉乘路線</h3>
+                                </div>
+                                <ul class="space-y-3">
+                                    ${data.fewest_transfers_route.map((step, index) => `
+                                        <li class="flex">
+                                            <div class="mr-3 flex flex-col items-center">
+                                                <div class="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center text-sm font-bold">${index + 1}</div>
+                                                ${index < data.fewest_transfers_route.length - 1 ? '<div class="w-0.5 h-full bg-purple-300"></div>' : ''}
+                                            </div>
+                                            <div class="pb-2">${formatRouteStep(step)}</div>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        `;
                     }
 
                     if ((!data.fastest_route || data.fastest_route.length === 0) &&
                         (!data.fewest_transfers_route || data.fewest_transfers_route.length === 0)) {
-                        routeContainer.textContent = '未找到路徑資訊。';
+                        html = `
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-md">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-700">未找到從「${startStation}」到「${endStation}」的路徑資訊</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                     }
+
+                    routeContainer.innerHTML = html;
                 })
                 .catch(error => {
                     console.error('查詢路徑錯誤:', error);
-                    routeContainer.textContent = '查詢路徑發生錯誤';
+                    routeContainer.innerHTML = `
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-red-700">查詢路徑發生錯誤，請稍後再試</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 });
         }
 
         function fetchHistoryAnalysis() {
             const historyContainer = document.getElementById('history-container');
-            historyContainer.innerHTML = '查詢中...';
+            historyContainer.classList.remove('hidden');
+            historyContainer.innerHTML = `
+                <div class="flex justify-center items-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+                    <p class="ml-4 text-indigo-600 font-medium">正在分析查詢紀錄...</p>
+                </div>
+            `;
 
             fetch('/history_analysis')
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
-                        historyContainer.textContent = `錯誤：${data.error}`;
+                        historyContainer.innerHTML = `
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-red-700">${data.error}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
                     } else {
-                        let html = ` 
-                            <h3>📊 查詢紀錄統計</h3>
-                            <ul>
-                                <li>查詢總次數：${data.total_queries}</li>
-                                <li>🔝 熱門起點站：
-                                    <ul>${Object.entries(data.top_start_stations).map(([k, v]) => `<li>${k}：${v} 次</li>`).join('')}</ul>
-                                </li>
-                                <li>🔝 熱門終點站：
-                                    <ul>${Object.entries(data.top_end_stations).map(([k, v]) => `<li>${k}：${v} 次</li>`).join('')}</ul>
-                                </li>
-                                <li>🛤️ 常見路線：
-                                    <ul>${Object.entries(data.most_frequent_routes).map(([k, v]) => `<li>${k}：${v} 次</li>`).join('')}</ul>
-                                </li>
-                                <li>⏰ 查詢時間分佈（小時）：
-                                    <ul>${Object.entries(data.query_hour_distribution).map(([hour, count]) => `<li>${hour} 點：${count} 次</li>`).join('')}</ul>
-                                </li>
-                            </ul>
+                        let html = `
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                <svg class="w-7 h-7 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                                查詢紀錄統計分析
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 shadow-sm">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h4 class="text-lg font-semibold text-gray-800">查詢總覽</h4>
+                                        <span class="text-3xl font-bold text-indigo-600">${data.total_queries}</span>
+                                    </div>
+                                    <p class="text-gray-600">總查詢次數</p>
+                                </div>
+                                
+                                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 shadow-sm">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-3">熱門起點站</h4>
+                                    <ul class="space-y-2">
+                                        ${Object.entries(data.top_start_stations).map(([station, count], index) => `
+                                            <li class="flex justify-between items-center ${index < 3 ? 'font-medium' : ''}">
+                                                <div class="flex items-center">
+                                                    ${index < 3 ? `<span class="w-5 h-5 rounded-full bg-green-600 text-white flex items-center justify-center text-xs mr-2">${index + 1}</span>` : ''}
+                                                    ${station}
+                                                </div>
+                                                <span class="text-green-700">${count} 次</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl p-5 shadow-sm">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-3">熱門終點站</h4>
+                                    <ul class="space-y-2">
+                                        ${Object.entries(data.top_end_stations).map(([station, count], index) => `
+                                            <li class="flex justify-between items-center ${index < 3 ? 'font-medium' : ''}">
+                                                <div class="flex items-center">
+                                                    ${index < 3 ? `<span class="w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-xs mr-2">${index + 1}</span>` : ''}
+                                                    ${station}
+                                                </div>
+                                                <span class="text-red-700">${count} 次</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-gradient-to-br from-purple-50 to-violet-50 rounded-xl p-5 shadow-sm">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-3">常見路線</h4>
+                                    <ul class="space-y-2">
+                                        ${Object.entries(data.most_frequent_routes).map(([route, count], index) => `
+                                            <li class="flex justify-between items-center ${index < 3 ? 'font-medium' : ''}">
+                                                <div class="flex items-center">
+                                                    ${index < 3 ? `<span class="w-5 h-5 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs mr-2">${index + 1}</span>` : ''}
+                                                    ${route.replace(' → ', ' <span class="text-gray-400 mx-1">→</span> ')}
+                                                </div>
+                                                <span class="text-purple-700">${count} 次</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl p-5 shadow-sm">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">查詢時間分佈</h4>
+                                <div class="h-40 flex items-end justify-between">
+                                    ${generateHourDistributionChart(data.query_hour_distribution)}
+                                </div>
+                                <div class="flex justify-between mt-2 text-xs text-gray-500">
+                                    <span>0時</span>
+                                    <span>6時</span>
+                                    <span>12時</span>
+                                    <span>18時</span>
+                                    <span>23時</span>
+                                </div>
+                            </div>
                         `;
                         historyContainer.innerHTML = html;
                     }
                 })
                 .catch(error => {
                     console.error('查詢紀錄錯誤:', error);
-                    historyContainer.textContent = '查詢紀錄發生錯誤';
+                    historyContainer.innerHTML = `
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-red-700">查詢紀錄分析發生錯誤，請稍後再試</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 });
         }
 
-    </script>
+        // 格式化路線步驟
+        function formatRouteStep(step) {
+            // 檢測是否包含轉乘資訊
+            if (step.includes('轉乘')) {
+                return step.replace(/轉乘(.+)線/, (match, line) => {
+                    let lineClass = '';
+                    if (line.includes('淡水信義')) lineClass = 'line-red';
+                    else if (line.includes('松山新店')) lineClass = 'line-green';
+                    else if (line.includes('板南')) lineClass = 'line-blue';
+                    else if (line.includes('中和新蘆')) lineClass = 'line-orange';
+                    else if (line.includes('文湖')) lineClass = 'line-brown';
+                    else if (line.includes('環狀')) lineClass = 'line-yellow';
+                    
+                    return `轉乘 <span class="inline-flex items-center"><span class="line-dot ${lineClass}"></span>${line}線</span>`;
+                });
+            }
+            // 檢測是否包含搭乘資訊
+            else if (step.includes('搭乘')) {
+                return step.replace(/搭乘(.+)線/, (match, line) => {
+                    let lineClass = '';
+                    if (line.includes('淡水信義')) lineClass = 'line-red';
+                    else if (line.includes('松山新店')) lineClass = 'line-green';
+                    else if (line.includes('板南')) lineClass = 'line-blue';
+                    else if (line.includes('中和新蘆')) lineClass = 'line-orange';
+                    else if (line.includes('文湖')) lineClass = 'line-brown';
+                    else if (line.includes('環狀')) lineClass = 'line-yellow';
+                    
+                    return `搭乘 <span class="inline-flex items-center"><span class="line-dot ${lineClass}"></span>${line}線</span>`;
+                });
+            }
+            return step;
+        }
 
-</body>
+        // 生成小時分佈圖表
+        function generateHourDistributionChart(hourData) {
+            // 找出最大值以便正確縮放
+            const maxCount = Math.max(...Object.values(hourData));
+            
+            let bars = '';
+            for (let hour = 0; hour <= 23; hour++) {
+                const count = hourData[hour] || 0;
+                const height = maxCount > 0 ? Math.max(10, (count / maxCount) * 100) : 0;
+                const color = getBarColor(hour);
+                
+                bars += `
+                    <div class="flex flex-col items-center mx-0.5">
+                        <div class="text-xs text-gray-600 mb-1">${count}</div>
+                        <div class="w-3 bg-${color}-500 rounded-t" style="height: ${height}%"></div>
+                    </div>
+                `;
+            }
+            return bars;
+        }
+
+        // 根據小時獲取顏色
+        function getBarColor(hour) {
+            if (hour >= 6 && hour < 12) return 'yellow';
+            if (hour >= 12 && hour < 18) return 'orange';
+            if (hour >= 18 && hour < 22) return 'red';
+            return 'indigo';
+        }
+
+        // 顯示通知
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-500 opacity-0 translate-y-[-20px]';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('opacity-0', 'translate-y-[-20px]');
+                notification.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+            
+            setTimeout(() => {
+                notification.classList.remove('opacity-100', 'translate-y-0');
+                notification.classList.add('opacity-0', 'translate-y-[-20px]');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 3000);
+        }
+
+        // 初始化頁面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 預設顯示擁擠度查詢頁籤
+            switchTab('crowded');
+            
+            // 為輸入框添加回車鍵事件
+            document.getElementById('query').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchCrowded();
+                }
+            });
+            
+            document.getElementById('end_station').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchRoute();
+                }
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93a87286f177a3a6',t:'MTc0NjM2NjQxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
 
