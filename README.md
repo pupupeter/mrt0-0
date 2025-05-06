@@ -9,56 +9,216 @@ https://www.deepwiki.com/pupupeter/mrt0-0
 -----------------------------------------------------------------------------------------
 
 
-# 台北捷運資訊整合系統
+# Taipei Metro Information Integration System
 
-## 專案說明
+## Project Description
 
-本專案旨在提供一個整合台北捷運資訊的平台，讓使用者能夠查詢捷運站點資訊、路線規劃，並分析歷史查詢紀錄。系統利用 Flask 框架開發，結合了多個 Python 模組，實現了以下主要功能：
+This project aims to build a comprehensive platform that facilitates user access to Taipei Metro information. It provides not only basic station information and route planning but also analyzes user query history and leverages large language models (LLMs) to generate valuable summaries.
 
-* **捷運站點資訊查詢：** 提供捷運站點的相關資訊，包含所屬路線及即時擁擠度資訊（若有）。
-* **智慧路線規劃：** 根據使用者輸入的起點站和終點站，提供最佳搭乘路徑建議，包括最快路徑和轉乘次數最少路徑。
-* **歷史紀錄分析：** 記錄使用者的查詢行為，並提供統計分析，例如熱門站點、常見路徑和查詢時間分布。
-* **Gemini 摘要：** 利用 Google 的 Gemini 模型，對歷史查詢紀錄進行摘要分析，提供使用者行為洞察。
+**Key Features:**
 
-## 技術架構
+* **Real-time Station Information Query:** Users can query specific metro stations, and the system displays the lines the station belongs to and integrates external resources (iframes) to show real-time congestion information. For transfer stations, the system lists information for all relevant lines.
+* **Intelligent Route Planning:** The system can calculate and recommend the best travel routes based on the origin and destination stations provided by users. It offers two types of recommendations:
+    * **Fastest Route:** Prioritizes travel time.
+    * **Fewest Transfers Route:** Minimizes the number of transfers, enhancing travel comfort.
+* **User Query History Records:** The system records user query behavior, including origin station, destination station, query time, and recommended routes. This data is used for subsequent analysis.
+* **Historical Record Analysis and Summary:** By analyzing historical records, the system can generate various statistical insights, such as:
+    * Popular origin and destination stations.
+    * Common travel routes.
+    * User query time distribution.
+    * Using the Google Gemini model, the system generates summaries based on these statistics, providing in-depth insights and recommendations regarding user behavior.
 
-* **Flask:** 作為後端 Web 框架，處理 HTTP 請求，並提供 API 接口。
-* **MongoDB:** 用於儲存捷運站點資料和使用者查詢歷史紀錄。
-* **Google Gemini API:** 用於生成歷史紀錄的摘要分析。
-* **smolagents:** 用於路線規劃功能，提供智慧路徑建議。
-* **Pandas & Plotly:** 用於歷史紀錄的資料分析和視覺化。
+## Technical Architecture
 
-## 檔案說明
+This project adopts a layered architecture, mainly comprising the following components:
 
-以下為專案中各主要檔案的功能說明：
+* **Backend:**
+    * **Flask:** A lightweight Python web framework used to handle HTTP requests, manage routes, and provide API endpoints.
+    * **MongoDB:** A NoSQL database used to store metro station data and user query history records. Its flexible schema design is well-suited for storing semi-structured historical data.
+    * **smolagents:** A library for building intelligent agents. In this project, it's used to calculate metro route suggestions.
+    * **Google Gemini API:** Google's large language model API, used to generate summary analysis of historical records.
+    * **Pandas:** A powerful Python data analysis library used to process and analyze historical query records.
+    * **Plotly:** An interactive plotting library used to visualize historical record analysis results, such as generating bar charts and pie charts.
+* **Data Sources:**
+    * **Static Station Data:** Stored in Python dictionaries, containing information for each metro station, including its name, lines, and external iframe IDs for displaying real-time information.
+    * **External Real-time Information:** Real-time metro information, such as congestion levels, is displayed by embedding iframes from external websites.
 
-* `agent_context.py`:  定義了與 smolagents 互動的 Agent，以及處理使用者查詢上下文的邏輯。
-* `app.py`:  Flask 應用程式的入口點，負責初始化應用程式、註冊路由和啟動伺服器。
-* `bb.py`:  負責從 MongoDB 取得歷史紀錄，並使用 Pandas 和 Plotly 產生統計圖表。
-* `cc.py`:  包含了捷運站點資料，以及站點所屬路線和對應的 iframe ID。
-* `history_analysis.py`:  實作歷史紀錄分析的相關功能，包括資料統計和 Gemini 摘要產生。
-* `history_utils.py`:  提供儲存使用者查詢歷史紀錄到 JSON 檔案和 MongoDB 的工具函式。
-* `iframe_config.py`:  定義了嵌入網頁中顯示捷運即時資訊 iframe 的相關設定。
-* `routes.py`:  定義了應用程式的路由，包括站點查詢、路線規劃和重置使用者上下文。
-* `station_utils.py`:  提供捷運站點的模糊搜尋和路線建議文字解析的工具函式。
+## File Description
 
-## 使用方法
+The following provides a detailed description of the functions and designs of the main files in the project:
 
-1.  **安裝相依套件：** ```bash
-    pip install -r requirements.txt  # (假設你有 requirements.txt)
+* **`agent_context.py`:**
+    * Defines the `CodeAgent` that interacts with `smolagents` for route planning.
+    * Encapsulates the Gemini model using `LiteLLMModel`.
+    * Implements user query context management. The system maintains the recent query history for each user, which helps improve the accuracy of route suggestions.
+    * The `run_with_user_context` function executes the Agent and updates the user context.
+    * The `reset_user_context` function clears the query history for a specific user.
+* **`app.py`:**
+    * The entry point of the Flask application.
+    * Initializes the Flask application instance.
+    * Registers the main functionality routes using the `register_routes` function.
+    * Registers the `history_analysis` blueprint to integrate historical record analysis-related APIs into the application.
+    * Defines the `/` route to display the main page (`3.html`).
+    * Defines the `/2` route to display historical record statistics charts.
+    * Starts the Flask development server.
+* **`bb.py`:**
+    * Handles the visualization of historical records.
+    * The `get_history` function retrieves query history from MongoDB.
+    * Uses Pandas to transform the historical data into a DataFrame for easier analysis.
+    * Uses Plotly to generate various statistical charts:
+        * **Bar Chart:** Displays the number of queries per day.
+        * **Pie Charts:** Display popular origin and destination stations.
+    * Uses the `to_html` function to convert Plotly charts into HTML snippets and embeds them into the web page template (`2.html`).
+* **`cc.py`:**
+    * Contains the static data for metro stations.
+    * The `station_data` dictionary stores information for each station, including:
+        * `line`: The line(s) the station belongs to.
+        * `iframe_id`: The ID of the external iframe used to display real-time information for that line.
+        * `lines` and `iframe_ids`: For transfer stations, stores multiple lines and corresponding iframe IDs.
+* **`history_analysis.py`:**
+    * Implements the core functionality for historical record analysis.
+    * Defines the `history_api` Blueprint to organize related API routes.
+    * The `analyze_history` function:
+        * Reads historical records from MongoDB.
+        * Uses Pandas for data cleaning and analysis.
+        * Calculates various statistical metrics, such as total queries, popular stations, common routes, and query time distribution.
+        * Calls the `generate_summary_with_gemini` function to generate a summary.
+        * Returns the analysis results and summary in JSON format.
+    * The `generate_summary` function:
+        * Allows users to provide custom statistical data and generates a corresponding summary.
+    * The `generate_summary_with_gemini` function:
+        * Uses the Gemini model to generate a summary of historical records.
+        * Constructs a prompt containing statistical data and passes it to the Gemini model.
+        * Handles the Gemini API response and potential errors.
+* **`history_utils.py`:**
+    * Provides utility functions for saving user query history records.
+    * The `save_search_history` function:
+        * Saves query records to a JSON file (`search_history.json`).
+        * Inserts query records into the `mrtdata` collection in MongoDB.
+* **`iframe_config.py`:**
+    * Defines the settings for external iframes used to display real-time metro information.
+    * The `iframe_data` dictionary stores the ID and title for each iframe.
+* **`routes.py`:**
+    * Defines the main routes of the application.
+    * The `register_routes` function:
+        * Defines the `/` route to display the main page.
+        * Defines the `/search` route to query station information.
+            * Receives the `query` parameter and searches for matching stations in `station_data`.
+            * If a station is found, returns the relevant iframe information.
+            * If no exact match is found, performs a fuzzy search using the `fuzzy_search_station` function.
+        * Defines the `/route` route to get route suggestions.
+            * Receives the `start` and `end` parameters and uses the `fuzzy_search_station` function to resolve station names.
+            * Calls the `run_with_user_context` function to calculate route suggestions using `fastest_agent` and `fewest_transfers_agent`.
+            * Uses the `parse_route_response` function to parse the Agent's response.
+            * Uses the `save_search_history` function to save the query record.
+        * Defines the `/reset_context` route to reset user context.
+            * Receives the `user_id` parameter and clears the user's query history.
+* **`station_utils.py`:**
+    * Provides utility functions related to metro stations.
+    * The `fuzzy_search_station` function:
+        * Uses the `difflib.get_close_matches` function to perform fuzzy searches and find the closest matching station names to the user's input.
+    * The `parse_route_response` function:
+        * Parses the route suggestion text returned by the Agent and converts it into a structured list.
+
+## Usage
+
+1.  **Environment Setup:**
+    * **Install Python:** Ensure you have Python 3.x installed on your system.
+    * **Install MongoDB:** Download and install MongoDB Community Server. Start the MongoDB service.
+    * **Set Environment Variables:**
+        * Install `python-dotenv`: `pip install python-dotenv`
+        * Create a `.env` file and set the MongoDB connection string and Google Gemini API key:
+
+        ```
+        MONGODB_URI="mongodb://localhost:27017/"  # Modify according to your MongoDB settings
+        GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+        ```
+
+2.  **Install Dependencies:**
+
+    ```bash
+    pip install -r requirements.txt  # (If the project has a requirements.txt file)
+    # If there's no requirements.txt, you need to install manually:
+    pip install Flask pymongo pandas plotly-express python-dotenv smolagents google-generativeai
     ```
-2.  **設定環境變數：** * 確保你有 MongoDB 服務正在運行，並更新程式中的連線字串。
-    * 設定 Google Gemini API 金鑰。
-3.  **啟動應用程式：** ```bash
+
+3.  **Start the Application:**
+
+    ```bash
     python app.py
     ```
-4.  **使用 API：** * **查詢站點資訊：** `/search?query=<站點名稱>`
-    * **取得路線建議：** `/route?start=<起點站>&end=<終點站>&user_id=<使用者ID>`
-    * **取得歷史紀錄統計圖表：** `/2`
-    * **取得歷史紀錄分析與摘要：** `/api/history_analysis`
-    * **重置使用者上下文：** `/reset_context` (POST 請求，需包含 JSON 格式的 `user_id`)
 
-## 備註
+    The application will start a development server locally.
 
-* 部分路線（例如環狀線、萬大線）可能沒有即時資訊。
-* 需要適當設定 MongoDB 連線字串和 Gemini API 金鑰才能正常使用完整功能。
+4.  **Use the API:**
+
+    You can interact with the application using HTTP requests. Here are some examples:
+
+    * **Query Station Information:**
+
+        ```
+        GET /search?query=<station_name>
+        ```
+
+        * Example: `/search?query=Taipei Main Station`
+        * Response: JSON format station information, including iframe settings for relevant lines.
+
+    * **Get Route Suggestions:**
+
+        ```
+        GET /route?start=<start_station>&end=<end_station>&user_id=<user_id>
+        ```
+
+        * Example: `/route?start=Taipei Main Station&end=Ximen&user_id=user123`
+        * Response: JSON format route suggestions, including the fastest route and the route with the fewest transfers.
+
+    * **Get Historical Record Statistics Charts:**
+
+        ```
+        GET /2
+        ```
+
+        * Response: HTML page containing statistical charts.
+
+    * **Get Historical Record Analysis and Summary:**
+
+        ```
+        GET /api/history_analysis
+        ```
+
+        * Response: JSON format analysis results, including statistical data and the summary generated by Gemini.
+
+    * **Reset User Context:**
+
+        ```
+        POST /reset_context
+        Content-Type: application/json
+        Body: {"user_id": "<user_id>"}
+        ```
+
+        * Example:
+
+            ```
+            POST /reset_context
+            Content-Type: application/json
+            Body: {"user_id": "user123"}
+            ```
+
+        * Response: JSON format confirmation that the context has been cleared.
+
+## Important Notes
+
+* **Data Accuracy:** The accuracy of real-time information depends on external resources and cannot be guaranteed.
+* **Error Handling:** The code includes basic error handling, but unexpected errors may still occur.
+* **Performance:** For high-traffic applications, performance optimization, such as using caching, may be necessary.
+* **Security:** This project does not include comprehensive security measures, such as authentication and authorization, which need to be added for deployment.
+
+## Future Development
+
+* **Integrate More Data Sources:** Incorporate more information about the metro, such as timetables, fare information, and station amenities.
+* **Improve User Interface:** Develop a more user-friendly interface to enhance the user experience.
+* **Optimize Route Planning Algorithm:** Consider more factors that influence route selection, such as platform waiting times and train congestion.
+* **Enhance Historical Record Analysis:** Develop more advanced analysis functions, such as predicting future user behavior.
+* **Add Map Display:** Display route planning results on a map for easier user comprehension.
+
+I hope this more detailed README helps you better understand and use this project!
