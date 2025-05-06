@@ -137,9 +137,8 @@ The following provides a detailed description of the functions and designs of th
 2.  **Install Dependencies:**
 
     ```bash
-    pip install -r requirements.txt  # (If the project has a requirements.txt file)
-    # If there's no requirements.txt, you need to install manually:
-    pip install Flask pymongo pandas plotly-express python-dotenv smolagents google-generativeai
+    
+    pip install Flask pymongo pandas plotly-express python-dotenv smolagents google-generativeai difflib
     ```
 
 3.  **Start the Application:**
@@ -221,4 +220,3 @@ The following provides a detailed description of the functions and designs of th
 * **Enhance Historical Record Analysis:** Develop more advanced analysis functions, such as predicting future user behavior.
 * **Add Map Display:** Display route planning results on a map for easier user comprehension.
 
-I hope this more detailed README helps you better understand and use this project!
