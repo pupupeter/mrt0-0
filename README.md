@@ -9,6 +9,34 @@ https://www.deepwiki.com/pupupeter/mrt0-0
 -----------------------------------------------------------------------------------------
 [中文](https://github.com/pupupeter/mrt0-0/blob/main/readmec.md)
 
+```mermaid
+
+    graph LR
+    A[Start] --> B(使用者發出請求)
+    B --> C{判斷請求類型}
+    C --> D(search 路由)
+    C --> E(route 路由)
+    D --> F[站點查詢]
+    E --> G[路線規劃]
+    F --> H(station_utils.py - fuzzy_search_station)
+    G --> H
+    H --> I(cc.py - station_data)
+    I --> J[iframe_config.py]
+    I --> K[agent_context.py]
+    J --> L
+    K --> L
+    L --> M(history_utils.py - save_search_history)
+    M --> N[MongoDB]
+    N --> O(app.py)
+    O --> P[回傳結果]
+    O --> Q(2 路由)
+    P --> R[使用者接收回應]
+    Q --> S(bb.py - get_history)
+    S --> N
+    R --> T[End]
+    
+```
+
 # Taipei Metro Information Integration System
 
 ## Project Description
