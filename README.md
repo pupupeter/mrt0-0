@@ -7,33 +7,18 @@ https://www.deepwiki.com/pupupeter/mrt0-0
 
 
 -----------------------------------------------------------------------------------------
-##  Table of Contents
 
-- [ Overview](#-overview)
-- [ Features](#-features)
-- [ Project Structure](#-project-structure)
-  - [ Project Index](#-project-index)
-- [ Getting Started](#-getting-started)
-  - [ Prerequisites](#-prerequisites)
-  - [ Installation](#-installation)
-  - [ Usage](#-usage)
-  - [ Testing](#-testing)
-- [ Project Roadmap](#-project-roadmap)
-- [ Contributing](#-contributing)
-- [ License](#-license)
-- [ Acknowledgments](#-acknowledgments)
+
 
 ---
 
 ##  Overview
 
-<code>❯ REPLACE-ME</code>
 
 ---
 
 ##  Features
 
-<code>❯ REPLACE-ME</code>
 
 ---
 
@@ -228,11 +213,6 @@ echo 'INSERT-TEST-COMMAND-HERE'
 
 ---
 
-##  License
-
-This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
-
----
 
 ##  Acknowledgments
 
