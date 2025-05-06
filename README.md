@@ -212,11 +212,3 @@ The following provides a detailed description of the functions and designs of th
 * **Performance:** For high-traffic applications, performance optimization, such as using caching, may be necessary.
 * **Security:** This project does not include comprehensive security measures, such as authentication and authorization, which need to be added for deployment.
 
-## Future Development
-
-* **Integrate More Data Sources:** Incorporate more information about the metro, such as timetables, fare information, and station amenities.
-* **Improve User Interface:** Develop a more user-friendly interface to enhance the user experience.
-* **Optimize Route Planning Algorithm:** Consider more factors that influence route selection, such as platform waiting times and train congestion.
-* **Enhance Historical Record Analysis:** Develop more advanced analysis functions, such as predicting future user behavior.
-* **Add Map Display:** Display route planning results on a map for easier user comprehension.
-
