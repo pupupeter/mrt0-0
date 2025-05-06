@@ -7,7 +7,7 @@ https://www.deepwiki.com/pupupeter/mrt0-0
 
 
 -----------------------------------------------------------------------------------------
-
+[中文](https://github.com/pupupeter/mrt0-0/blob/main/readmec.md)
 
 # Taipei Metro Information Integration System
 
