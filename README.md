@@ -11,30 +11,94 @@ https://www.deepwiki.com/pupupeter/mrt0-0
 
 ```mermaid
 
-    graph LR
-    A[Start] --> B(使用者發出請求)
-    B --> C{判斷請求類型}
-    C --> D(search 路由)
-    C --> E(route 路由)
-    D --> F[站點查詢]
-    E --> G[路線規劃]
-    F --> H(station_utils.py - fuzzy_search_station)
-    G --> H
-    H --> I(cc.py - station_data)
-    I --> J[iframe_config.py]
-    I --> K[agent_context.py]
-    J --> L
-    K --> L
-    L --> M(history_utils.py - save_search_history)
-    M --> N[MongoDB]
-    N --> O(app.py)
-    O --> P[回傳結果]
-    O --> Q(2 路由)
-    P --> R[使用者接收回應]
-    Q --> S(bb.py - get_history)
-    S --> N
-    R --> T[End]
-    
+graph LR
+A[Start: app.py] --> B{User Operation: Crowdness Query or Route Query}
+
+subgraph CrowdnessQuery
+    B --> C["routes.py: /search"]
+    C --> C1[Use station_data in cc.py]
+    C1 --> D{Station in station_data?}
+    D -- Yes --> E{Get Station Info}
+    E --> F{Info has line or lines?}
+    F -- line --> G[Get line iframe_data]
+    G --> J[Return Crowdness Info JSON]
+    F -- lines --> H[Loop lines]
+    H --> I[Get current line iframe_data]
+    I --> H
+    H --> J
+    D -- No --> K[fuzzy_search_station in station_utils.py]
+    K --> L{Has matches?}
+    L -- Yes --> M[Loop matches]
+    M --> N[Get matched station info]
+    N --> O{Info has line or lines?}
+    O -- line --> P[Get line iframe_data]
+    P --> S[Return Crowdness Info JSON]
+    O -- lines --> Q[Loop lines]
+    Q --> R[Get current line iframe_data]
+    R --> Q
+    Q --> S
+    M --> M
+    M --> S
+    L -- No --> T[Return Error JSON]
+end
+
+subgraph RouteQuery
+    B --> U["routes.py: /route"]
+    U --> U1[Use station_data in cc.py]
+    U1 --> V[Parse Start/End stations]
+    V --> W[fuzzy_search_station in station_utils.py]
+    W --> X{Verification successful?}
+    X -- No --> Y[Return Error JSON]
+    X -- Yes --> AA[Call agent_context.py for route]
+    AA --> AB[run_with_user_context]
+    AB --> AC[save_search_history in history_utils.py]
+    AC --> AD[Save to JSON and MongoDB]
+    AD --> AE[Return Route Info JSON]
+end
+
+subgraph QueryHistory
+    B --> AF["app.py: /2 (Initial)"]  
+    AF --> AG{User clicks '跳轉到 2.html'}
+    AG -- Yes --> AH[get_history in bb.py]
+    AH --> AI[Read from MongoDB]
+    AI --> AJ{Any records?}
+    AI -- Yes --> AK[pandas: process data]
+    AK --> AL[Generate charts]
+    AL --> AM[Return HTML with charts]
+    AI -- No --> AN[Return No Records JSON]
+
+    AM --> AO["/history_analysis API"]
+    AO --> AP[Read from MongoDB]
+    AP --> AQ{Any records?}
+    AP -- No --> AR[Return Error JSON]
+    AP -- Yes --> AS[Analyze with pandas]
+    AS --> AT[Calculate stats]
+    AT --> AU[Summarize with Gemini]
+    AU --> AV[Return stats + summary JSON]
+
+    AM --> AW["/generate_summary API"]
+    AW --> AX[Get data from request]
+    AX --> AY{Has necessary fields?}
+    AY -- No --> AZ[Return Error JSON]
+    AY -- Yes --> BA[Summarize with Gemini]
+    BA --> BC[Return Summary JSON]
+
+    AK --> AK1[Calculate Search Frequency]
+    AK --> AK2[Calculate Start Station Frequency]
+    AK --> AK3[Calculate End Station Frequency]
+
+    AK1 --> AL
+    AK2 --> AL
+    AK3 --> AL
+
+    AL --> AL1[Generate Search Frequency Chart]
+    AL --> AL2[Generate Start Station Frequency Chart]
+    AL --> AL3[Generate End Station Frequency Chart]
+
+    AL1 --> AM
+    AL2 --> AM
+    AL3 --> AM
+end
 ```
 
 # Taipei Metro Information Integration System
