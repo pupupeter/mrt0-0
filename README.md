@@ -200,22 +200,3 @@ echo 'INSERT-TEST-COMMAND-HERE'
 7. **Submit a Pull Request**: Create a PR against the original project repository. Clearly describe the changes and their motivations.
 8. **Review**: Once your PR is reviewed and approved, it will be merged into the main branch. Congratulations on your contribution!
 </details>
-
-<details closed>
-<summary>Contributor Graph</summary>
-<br>
-<p align="left">
-   <a href="https://github.com{/pupupeter/mrt0-0/}graphs/contributors">
-      <img src="https://contrib.rocks/image?repo=pupupeter/mrt0-0">
-   </a>
-</p>
-</details>
-
----
-
-
-##  Acknowledgments
-
-- List any resources, contributors, inspiration, etc. here.
-
----
