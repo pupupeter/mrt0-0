@@ -6,6 +6,10 @@ if you do not like my introduction you could just click the link
 https://www.deepwiki.com/pupupeter/mrt0-0
 
 
+
+
+https://youtu.be/izW3w9udIVs
+
 -----------------------------------------------------------------------------------------
 [中文](https://github.com/pupupeter/mrt0-0/blob/main/readmec.md)
 
